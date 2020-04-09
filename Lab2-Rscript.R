@@ -298,6 +298,90 @@ m3_path_fit <- mplusModeler(m3_path,
 
 # ______________________________________________
 
+
+## Estimate model 4
+
+# ______________________________________________
+
+m4_path  <- mplusObject(
+  TITLE = "m4 model indirect - Lab 1", 
+  VARIABLE = 
+    "usevar =
+    str               ! covariate
+    elpct             ! mediator
+    mealpct           ! mediator
+    mathscr           ! outcome", 
+  
+  DEFINE = 
+    "int_ab = compstu*mealpct;  ! create interaction term" ,
+  
+  ANALYSIS = 
+    "estimator = MLR" ,
+  
+  MODEL = 
+    "mathscr on str;             ! direct path (c')
+    mathscr on elpct mealpct;   ! b paths
+    elpct mealpct on str;       ! a paths
+    
+    Model indirect:
+    mathscr ind str;" ,
+  
+  OUTPUT = "sampstat standardized modindices (ALL)",
+  
+  usevariables = colnames(path_vars),   
+  rdata = path_vars)                    
+
+m4_path_fit <- mplusModeler(m4_path,
+                            dataout=here("mplus_files", "Lab2.dat"),       
+                            modelout=here("mplus_files", "m4_path_Lab2.inp"),
+                            check=TRUE, run = TRUE, hashfilename = FALSE)
+
+# ______________________________________________
+
+## Estimate model 5
+
+# ______________________________________________
+
+# add modification statement - correlate mediators - mealpct with elpct
+
+m5_path  <- mplusObject(
+  TITLE = "m5 model indirect - Lab 1", 
+  VARIABLE = 
+    "usevar =
+    str               ! covariate
+    elpct             ! mediator
+    mealpct           ! mediator
+    mathscr           ! outcome", 
+  
+  DEFINE = 
+    "int_ab = compstu*mealpct;  ! create interaction term" ,
+  
+  ANALYSIS = 
+    "estimator = MLR" ,
+  
+  MODEL = 
+    "mathscr on str;             ! direct path (c')
+    mathscr on elpct mealpct;   ! b paths
+    elpct mealpct on str;       ! a paths
+    
+    mealpct with elpct          ! modification statement 
+    
+    Model indirect:
+    mathscr ind str; " ,
+  
+  OUTPUT = "sampstat standardized modindices (ALL)",
+  
+  usevariables = colnames(path_vars),   
+  rdata = path_vars)                    
+
+m5_path_fit <- mplusModeler(m5_path,
+                            dataout=here("mplus_files", "Lab2.dat"),       
+                            modelout=here("mplus_files", "m5_path_Lab2.inp"),
+                            check=TRUE, run = TRUE, hashfilename = FALSE)
+
+# ______________________________________________
+
+
 # Compare model fit 
 
 # Read into R summary of all models
